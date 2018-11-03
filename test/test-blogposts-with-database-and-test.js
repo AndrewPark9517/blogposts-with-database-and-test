@@ -201,4 +201,31 @@ describe('Blogpost API resource', function() {
             });
         });
     });
+
+    describe('DELETE endpoint', function() {
+        // strategy: 
+        // get a post
+        // delete the post
+        // check for status code
+        // check if no longer in database
+
+        it('should delete a restaurant by id', function() {
+            let resPost;
+            return BlogPost
+                .findOne()
+                .then(function(post) {
+                    resPost = post;
+                    
+                    return chai.request(app)
+                        .delete(`/posts/${resPost.id}`)
+                })
+                .then(function(res) {
+                    expect(res).to.have.status(204);
+                    return BlogPost.findById(resPost.id);
+                })
+                .then(function(post) {
+                    expect(post).to.be.null;
+                });
+        });
+    });
 });
