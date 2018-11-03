@@ -133,6 +133,47 @@ describe('Blogpost API resource', function() {
         });
     });
 
-    
+    describe('Post endpoint', function() {
+        // test strategy:
+        // make sure the returned object has the right fields 
+        // make sure the returned object has the same values as given
+        // make sure there is an object within the database with the
+        // same id as the returned object
 
+        it('Should add a new post', function() {
+        const newPost = generateBlogPostData();
+        return chai.request(app)
+            .post('/posts')
+            .send(newPost)
+            .then(function(res) {
+                expect(res).to.have.status(201);
+                expect(res).to.be.json;
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.include.keys(
+                    'id', 'title', 'author', 'content');
+                // compare newpost to post returned by POST request
+                expect(res.body.title).to.equal(newPost.title);
+                expect(res.body.author).to.equal(newPost.author.firstName
+                + ' ' + newPost.author.lastName);
+                expect(res.body.content).to.equal(newPost.content);
+                return BlogPost.findById(res.body.id)
+            })
+            .then(function(post) {
+                // compare newPost to post stored within database
+                expect(post.title).to.equal(newPost.title);
+                expect(post.author.firstName).to.equal(newPost.author.firstName);
+                expect(post.author.lastName).to.equal(newPost.author.lastName);
+                expect(post.content).to.equal(newPost.content)
+            });
+        });
+    });
+
+    describe('PUT endpoint', function() {
+
+        // test stragegy:
+        // get existing post from db
+        // make PUT request
+        // make sure returned post has updated data
+        // make sure post in db has updated data
+    })
 });
