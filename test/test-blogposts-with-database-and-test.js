@@ -175,5 +175,30 @@ describe('Blogpost API resource', function() {
         // make PUT request
         // make sure returned post has updated data
         // make sure post in db has updated data
-    })
+
+        it('Should update post', function() {
+            const update = {
+                title: "updated title",
+                content: "updated content"
+            };
+
+            return BlogPost
+            .findOne()
+            .then(function(post) {
+                update.id = post.id;
+
+                return chai.request(app)
+                    .put(`/posts/${update.id}`)
+                    .send(update)
+            })
+            .then(function(res) {
+                expect(res).to.have.status(204);
+                return BlogPost.findById(update.id);
+            })
+            .then(function(post) {
+                expect(post.title).to.equal(update.title);
+                expect(post.content).to.equal(update.content);
+            });
+        });
+    });
 });
