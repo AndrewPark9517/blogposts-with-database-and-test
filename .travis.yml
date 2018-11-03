@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: aUAVBk+ZLRf7tzk3lpR753NCcoCGhVXw+uZn23Nsyu4Jy1MuyNt4Qe0NGg60smpEHe5LXsTUIcgX3pV0h9yof8zSBqhhcgnAwEpO38OB1qss0In81ZwMd1PTIn4CClj7gHWiZWs9MXX7sJIPVUZl2YbBoQriaditgTXWy0cTTcehOfgMyzTnCTEC38XQqDCPhriDuaoH+Gu/66z/wXau/MAN4+38hya4ci/0A34lBUj9u7V2AGPQgCwN75a7n6sDHbfVtjZj4XaUnlIYN5pSxtu/A3knsk+nrvB7RnW89IzsA5jT0VSzZK1ZCnCttToXt0rnKy19umFK/HboZyhrh4y43n27mNWyzpXjcIAjYDLrlPN1m9bPas9+U2+WJz5JxI6pIIfuyrLyNhJwWr5SeXWyoyUxrMQJ6L/tN9nJb1iM2tYtKXHrWdwb9UdbzCMr1wYXaC5GYMz77si5hyYZQtUUIipetTT1gHV+Zsf/u4zGF5hR7r/V8VQbsWoOditgiO+7GhJgc717FfGRNBt7C1Q0flggw43SMYtD41YHHJ0QaLHAylsuhJfj2oeWRGH6H5yACwpajHlTh8MvoyVQvO55HIhqQ6x+/jzxNSnVXx9TLwOo8VkifZwiaUZWO5LR/A6wOIuMOS+qcPvJ6ceCcUQEr190mJggtoJwGvc29dw=
+  app: desolate-shelf-63753
+  on:
+    repo: AndrewPark9517/blogposts-with-database-and-test
