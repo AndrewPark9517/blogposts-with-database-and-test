@@ -5,13 +5,15 @@ const chaiHTTP = require('chai-http');
 const faker = require('faker');
 const mongoose = require('mongoose');
 
+mongoose.Promise = global.Promise;
+
 const expect = chai.expect;
 
 const {BlogPost} = require('../models');
 const {app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
-chai.use(chaiHttp);
+chai.use(chaiHTTP);
 
 // used to seed test database with fake blogposts
 // using generateBlogPostData() function
@@ -25,7 +27,7 @@ function seedBlogPostData() {
     for(let i = 0; i <= 10; i++) {
         seedData.push(generateBlogPostData());
     }
-
+    
     return BlogPost.insertMany(seedData);
 }
 
@@ -40,7 +42,7 @@ function generateBlogPostData() {
             lastName: faker.name.lastName()
         },
         content: faker.lorem.sentence()
-    }
+    };
 }
 
 // function to delete entire database 
@@ -76,6 +78,60 @@ describe('Blogpost API resource', function() {
     after(function() {
         return closeServer();
     })
+
+    // using nested 'describe' blocks for clarity and 
+    // providing something small
+    describe('GET Endpoint', function() {
+        
+        it('should return all existing blogposts', function() {
+            // strategy: 
+            // 1. Make sure the number of posts returned is correct
+            // 2. Make sure each post has the correct fields
+            // 3. confirm data type and status of returned data
+        
+            let res;
+            return chai.request(app)
+                .get('/posts')
+                .then(function(blogposts) {
+                    res = blogposts;
+                    expect(res).to.have.status(200);
+                    // if test below doesn't pass, means seeding didn't work
+                    expect(res.body).to.have.lengthOf.at.least(1);
+                    return BlogPost.count();
+                })
+                .then(function(count) {
+                    expect(res.body).to.have.lengthOf(count);
+                })
+        });
+
+        it('should return posts with right fields', function() {
+
+            let resPost;
+            return chai.request(app)
+            .get('/posts')
+            .then(function(res) {
+                expect(res).to.have.status(200);
+                expect(res).to.be.json;
+                expect(res.body).to.be.a('array');
+                expect(res.body).to.have.lengthOf.at.least(1);
+
+                res.body.forEach(function(post) {
+                    expect(post).to.be.a('object');
+                    expect(post).to.include.keys(
+                        'title', 'author', 'content');
+                });
+                resPost = res.body[0];
+                return BlogPost.findById(resPost.id);
+            })
+            .then(function(post) {
+                expect(resPost.id).to.equal(post.id);
+                expect(resPost.title).to.equal(post.title);
+                expect(resPost.author).to.equal(post.author.firstName 
+                + ' ' + post.author.lastName);
+                expect(resPost.content).to.equal(post.content);
+            });
+        });
+    });
 
     
 
